@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>ChatterBox — Вход</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    .box { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 15px; border: none; border-radius: 5px; background: #4CAF50; color: white; cursor: pointer; }
+    button:hover { background: #45a049; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>ChatterBox — Вход / Регистрация</h2>
+    <input type="text" id="username" placeholder="Имя пользователя">
+    <input type="password" id="password" placeholder="Пароль">
+    <button onclick="register()">Зарегистрироваться</button>
+    <button onclick="login()">Войти</button>
+    <p id="message" class="error"></p>
+  </div>
+
+  <script>
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('users')) || {};
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function register() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!username || !password) {
+        showMessage("Введите логин и пароль");
+        return;
+      }
+
+      let users = getUsers();
+      if (users[username]) {
+        showMessage("Пользователь уже существует");
+        return;
+      }
+
+      users[username] = password;
+      saveUsers(users);
+      localStorage.setItem('loggedInUser', username);
+      alert("Вы зарегистрированы!");
+      redirectToChat();
+    }
+
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      let users = getUsers();
+      if (users[username] && users[username] === password) {
+        localStorage.setItem('loggedInUser', username);
+        alert("Добро пожаловать, " + username + "!");
+        redirectToChat();
+      } else {
+        showMessage("Неправильный логин или пароль");
+      }
+    }
+
+    function showMessage(msg) {
+      document.getElementById("message").textContent = msg;
+    }
+
+    function redirectToChat() {
+      // Перенаправление на основную часть сайта
+      window.location.href = "chatterbox.html"; // Поменяй на нужный файл, если основной чат отдельно
+    }
+  </script>
+</body>
+</html>
